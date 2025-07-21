@@ -16,59 +16,58 @@ Vous souhaitez y apporter des changements ou des améliorations ? Lisez notre [
 
 #### Tous environnements
 
-- postgresql (version >= 15)
-- imagemagick et gsfonts pour générer les filigranes sur les titres d'identité ou générer des minitiatures d'images.
+- `postgresql` (version >= 15)
+- `redis` (pour le traitement des tâches asynchrones par `sidekiq`)
+- `imagemagick`, includant les `gsfonts` (pour générer les minitiatures d'images et les filigranes sur les titres d'identité)
 
 > [!WARNING]
-> Pensez à restreindre la policy d'ImageMagick pour bloquer l'exploitation d'images malveillantes.
-> La configuration par défaut est généralement insuffisante pour des images provenant du web.
-> Par exemple sous debian/ubuntu dans `/etc/ImageMagick-6/policy.xml` :
+> Pensez à restreindre la policy d'ImageMagick pour bloquer l'exploitation d'images malveillantes:
+> la configuration par défaut est généralement insuffisante pour des images provenant du web.
+>
+> Par exemple sous debian/ubuntu dans `/etc/ImageMagick-6/policy.xml` :
 
-```xml
-<!-- en plus de la policy par défaut, ajoutez à la fin du fichier -->
-<policymap>
-    <policy domain="coder" rights="none" pattern="*"/>
-    <policy domain="coder" rights="read | write" pattern="{JPG,JPEG,PNG,JSON}"/>
-    <policy domain="module" rights="none" pattern="{MSL,MVG,PS,SVG,URL,XPS}"/>
-</policymap>
-```
+> ```xml
+> <!-- en plus de la policy par défaut, ajoutez à la fin du fichier -->
+> <policymap>
+>     <policy domain="coder" rights="none" pattern="*"/>
+>     <policy domain="coder" rights="read | write" pattern="{JPG,JPEG,PNG,JSON}"/>
+>     <policy domain="module" rights="none" pattern="{MSL,MVG,PS,SVG,URL,XPS}"/>
+> </policymap>
+> ```
 
-Nous sommes en cours de migration de `delayed_job` vers `sidekiq` pour le traitement des jobs asynchrones.
-Pour faire tourner sidekiq, vous aurez besoin de :
-
-- redis
-
-- lightgallery : une license a été souscrite pour soutenir le projet, mais elle n'est pas obligatoire si la librairie est utilisée dans le cadre d'une application open source.
+> [!NOTE]
+> Optionel: une license pour la bibliothèque `lightgallery`. Une license a été souscrite pour soutenir le projet, mais elle n'est pas obligatoire si la librairie est utilisée dans le cadre d'une application open-source.
 
 #### Développement
 
-- rbenv : voir https://github.com/rbenv/rbenv-installer#rbenv-installer--doctor-scripts
-- Bun : voir https://bun.sh/docs/installation
+- `rbenv` : voir https://github.com/rbenv/rbenv-installer#rbenv-installer--doctor-scripts
+- `bun` : voir https://bun.sh/docs/installation
 
 #### Tests
 
 - Chrome
-- chromedriver :
-  - Mac : `brew install chromedriver`
-  - Linux : voir https://developer.chrome.com/blog/chrome-for-testing
+- `chromedriver` :
+  - Mac : `brew install chromedriver`
+  - Linux : voir https://developer.chrome.com/blog/chrome-for-testing
 
-Si l'emplacement d'installation de Chrome n'est pas standard, ou que vous utilisez Brave ou Chromium à la place,
-il peut être nécessaire d'overrider pour votre machine le path vers le binaire Chrome, par exemple :
-
-```ruby
-# create file spec/support/spec_config.local.rb
-
-Selenium::WebDriver::Chrome.path = "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
-
-# Must exactly match the browser version
-Webdrivers::Chromedriver.required_version = "103.0.5060.53"
-```
-
-Il est également possible de faire une installation et mise à jour automatique lors de l'exécution de `bin/update` en définissant la variable d'environnement `UPDATE_WEBDRIVER`. Les binaires seront installés dans le repertoire `~/.local/bin/` qui doit être rajouté manuellement dans le path.
+> [!NOTE]
+> Si l'emplacement d'installation de Chrome n'est pas standard, ou que vous utilisez Brave ou Chromium à la place,
+> il peut être nécessaire d'overrider pour votre machine le path vers le binaire Chrome, par exemple :
+>
+> ```ruby
+> # create file spec/support/spec_config.local.rb
+>
+> Selenium::WebDriver::Chrome.path = "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
+>
+> # Must exactly match the browser version
+> Webdrivers::Chromedriver.required_version = "103.0.5060.53"
+> ```
+>
+> Il est également possible de faire une installation et mise à jour automatique lors de l'exécution de `bin/update` en définissant la variable d'environnement `UPDATE_WEBDRIVER`. Les binaires seront installés dans le repertoire `~/.local/bin/` qui doit être rajouté manuellement dans le path.
 
 ### Création des rôles de la base de données
 
-Les informations nécessaire à l'initialisation de la base doivent être pré-configurées à la main grâce à la procédure suivante :
+Les informations nécessaire à l'initialisation de la base doivent être pré-configurées à la main grâce à la procédure suivante :
 
     su - postgres
     psql
@@ -78,13 +77,14 @@ Les informations nécessaire à l'initialisation de la base doivent être pré-c
 
 ### Initialisation de l'environnement de développement
 
-Sous Ubuntu, certains packages doivent être installés au préalable :
-
-    sudo apt-get install libcurl3 libcurl3-gnutls libcurl4-openssl-dev libcurl4-gnutls-dev zlib1g-dev
-
 Afin d'initialiser l'environnement de développement, exécutez la commande suivante :
 
     bin/setup
+
+> [!TIP]
+> Sous Ubuntu, certains packages doivent être installés au préalable :
+>
+>    sudo apt-get install libcurl3 libcurl3-gnutls libcurl4-openssl-dev libcurl4-gnutls-dev zlib1g-dev
 
 ### Lancement de l'application
 

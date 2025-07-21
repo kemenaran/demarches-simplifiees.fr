@@ -19,55 +19,56 @@ Would you like to make changes or improvements? Read our [contribution guide](CO
 
 #### All environments
 
-- postgresql (version >= 15)
-- imagemagick and gsfonts to generate watermarks on identity documents or generate image thumbnails.
+- `postgresql` (version >= 15)
+- `redis` (for asynchronous job processing using `sidekiq`)
+- `imagemagick`, with `gsfonts` support (to generate image thumbnails and watermark identity documents)
 
 > [!WARNING]
-> Remember to restrict ImageMagick's policy to block exploitation of malicious images.
-> The default configuration is usually insufficient for images from the web.
+> Remember to restrict ImageMagick's policy to block exploitation of malicious images:
+> the default configuration is usually insufficient for images from the web.
+>
 > For example, on Debian/Ubuntu in `/etc/ImageMagick-6/policy.xml`:
+>
+> ```xml
+> <!-- in addition to the default policy, add at the end of the file -->
+> <policymap>
+>     <policy domain="coder" rights="none" pattern="*"/>
+>     <policy domain="coder" rights="read | write" pattern="{JPG,JPEG,PNG,JSON}"/>
+>     <policy domain="module" rights="none" pattern="{MSL,MVG,PS,SVG,URL,XPS}"/>
+> </policymap>
+> ```
 
-```xml
-<!-- in addition to the default policy, add at the end of the file -->
-<policymap>
-    <policy domain="coder" rights="none" pattern="*"/>
-    <policy domain="coder" rights="read | write" pattern="{JPG,JPEG,PNG,JSON}"/>
-    <policy domain="module" rights="none" pattern="{MSL,MVG,PS,SVG,URL,XPS}"/>
-</policymap>
-```
-
-We are currently migrating from `delayed_job` to `sidekiq` for asynchronous job processing.
-To run sidekiq, you will need:
-
-- redis
-
-- lightgallery: a license has been purchased to support the project, but it is not required if the library is used as part of an open source application.
+> [!NOTE]
+> Optional: a license for the `lightgallery` library. A license has been purchased to support the project; but the license is not required when the library is used as part of an open-source application.
 
 #### Development
 
-- rbenv: see https://github.com/rbenv/rbenv-installer#rbenv-installer--doctor-scripts
-- Bun: see https://bun.sh/docs/installation
+- `rbenv`: see https://github.com/rbenv/rbenv-installer#rbenv-installer--doctor-scripts
+- `bun`: see https://bun.sh/docs/installation
 
 #### Tests
 
 - Chrome
-- chromedriver:
-  - Mac: `brew install chromedriver`
-  - Linux: see https://developer.chrome.com/blog/chrome-for-testing
+- `chromedriver`:
+   - Mac: `brew install chromedriver`
+   - Linux: see https://developer.chrome.com/blog/chrome-for-testing
 
-If Chrome's installation location is non-standard, or if you're using Brave or Chromium instead,
-you may need to override the path to the Chrome binary for your machine, for example:
-
-```ruby
-# create file spec/support/spec_config.local.rb
-
-Selenium::WebDriver::Chrome.path = "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
-
-# Must exactly match the browser version
-Webdrivers::Chromedriver.required_version = "103.0.5060.53"
-```
-
-It's also possible to automatically install and update when running `bin/update` by defining the `UPDATE_WEBDRIVER` environment variable. The binaries will be installed in the `~/.local/bin/` directory, which must be manually added to your path.
+> [!NOTE]
+> If Chrome's installation location is non-standard, or if you're using Brave or Chromium instead,
+> you may need to override the path to the Chrome binary for your machine, for example:
+>
+> ```ruby
+> # create file spec/support/spec_config.local.rb
+>
+> Selenium::WebDriver::Chrome.path = "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
+>
+> # Must exactly match the browser version
+> Webdrivers::Chromedriver.required_version = "103.0.5060.53"
+> ```
+>
+> It's also possible to automatically install and update when running `bin/update` by defining the
+> `UPDATE_WEBDRIVER` environment variable. The binaries will be installed in the `~/.local/bin/` directory,
+> which must be manually added to your path.
 
 ### Creating database roles
 
@@ -81,13 +82,14 @@ The information needed to initialize the database must be pre-configured manuall
 
 ### Initializing the development environment
 
-On Ubuntu, some packages must be installed first:
-
-    sudo apt-get install libcurl3 libcurl3-gnutls libcurl4-openssl-dev libcurl4-gnutls-dev zlib1g-dev
-
 To initialize the development environment, run the following command:
 
     bin/setup
+
+> [!TIP]
+> On Ubuntu, some packages must be installed first:
+>
+>     sudo apt-get install libcurl3 libcurl3-gnutls libcurl4-openssl-dev libcurl4-gnutls-dev zlib1g-dev
 
 ### Launching the application
 
@@ -95,7 +97,7 @@ Start the application server like this:
 
     bin/dev
 
-The application will then run at `http://localhost:3000` with a worker for jobs and the vitejs bundler running in parallel.
+The application will then run at `http://localhost:3000`, with a worker for jobs and the vitejs bundler running in parallel.
 
 ### Test users
 
