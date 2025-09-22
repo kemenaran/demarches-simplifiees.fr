@@ -23,21 +23,6 @@ Would you like to make changes or improvements? Read our [contribution guide](CO
 - `redis` (for asynchronous job processing using `sidekiq`)
 - `imagemagick`, with `gsfonts` support (to generate image thumbnails and watermark identity documents)
 
-> [!WARNING]
-> Remember to restrict ImageMagick's policy to block exploitation of malicious images:
-> the default configuration is usually insufficient for images from the web.
->
-> For example, on Debian/Ubuntu in `/etc/ImageMagick-6/policy.xml`:
->
-> ```xml
-> <!-- in addition to the default policy, add at the end of the file -->
-> <policymap>
->     <policy domain="coder" rights="none" pattern="*"/>
->     <policy domain="coder" rights="read | write" pattern="{JPG,JPEG,PNG,JSON}"/>
->     <policy domain="module" rights="none" pattern="{MSL,MVG,PS,SVG,URL,XPS}"/>
-> </policymap>
-> ```
-
 > [!NOTE]
 > Optional: a license for the `lightgallery` library. A license has been purchased to support the project; but the license is not required when the library is used as part of an open-source application.
 
